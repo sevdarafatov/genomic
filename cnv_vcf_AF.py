@@ -4,10 +4,11 @@ import os
 class cnv_AF:
     def __init__(self,cnv_directory):
         self.cnvD = cnv_directory
-        self.outputFolder = "/home/sevda/Desktop/sevda/allele_frequency"
-        self.cnvs = self.get_cnvs()
-        self.commandMaker()
-        self.count_frequency()
+        self.outputFolder = "/home/gnks/Desktop/sevda/allele_frequency"
+        #self.cnvs = self.get_cnvs()
+       #self.commandMaker()
+        #self.count_frequency()
+        self.to_bed()
 
     def get_cnvs(self): 
         cnvs_list=[]  # creating an empty list to get cnv vcfs
@@ -57,5 +58,17 @@ class cnv_AF:
             vcf_writer.write_record(record)
             
         vcf_writer.close()
+    
+    def to_bed(self):
+        with open('output_with_info_FINAL.txt', 'r') as vcf_file, open('cnv.bed', 'w') as bed_file:
+            for line in vcf_file:
+                if line.startswith("#"):
+                    continue
+                fields = line.strip().split("\t")
+                chrom, start = fields[0], fields[1]
+                af = fields[7].split("AF=")[1].split(";")[0]
+                end = fields[7].split("END=")[1].split(";")[0]
+                bed_file.write(f"{chrom}\t{start}\t{end}\t{af}\n")
 
-cnv_AF("/home/sevda/Desktop/sevda/allele_frequency")
+
+cnv_AF("/home/gnks/Desktop/sevda/allele_frequency")
